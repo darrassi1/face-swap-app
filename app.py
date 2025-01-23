@@ -7,16 +7,16 @@ import insightface
 from insightface.app import FaceAnalysis
 import time
 import requests
-import onnxruntime
 
 app = ''
 swapper = ''
 st.set_page_config(page_title="FaceSwap App by Younes Darrassi")
 
+
 def download_model():
     url = "https://cdn.adikhanofficial.com/python/insightface/models/inswapper_128.onnx"
     filename = url.split('/')[-1]
-    filepath = os.path.join(os.path.dirname(__file__),filename)
+    filepath = os.path.join(os.path.dirname(__file__), filename)
 
     if not os.path.exists(filepath):
         print(f"Downloading {filename}...")
@@ -27,11 +27,13 @@ def download_model():
     else:
         print(f"{filename} already exists in the directory.")
 
+
 def swap_faces(target_image, target_face, source_face):
     try:
         return swapper.get(target_image, target_face, source_face, paste_back=True)
     except Exception as e:
         st.error(f"Error during swaping: {e}")
+
 
 def image_faceswap_app():
     st.title("Face Swapper for Image")
@@ -67,6 +69,7 @@ def image_faceswap_app():
             except Exception as e:
                 st.error(f"Error during image processing: {e}")
 
+
 def process_video(source_img, video_path, output_video_path):
     try:
         cap = cv2.VideoCapture(video_path)
@@ -95,7 +98,8 @@ def process_video(source_img, video_path, output_video_path):
             out.write(frame)
             elapsed_time = time.time() - start_time
             frames_per_second = frame_count / elapsed_time if elapsed_time > 0 else 0
-            remaining_time_seconds = max(0, (total_frames - frame_count) / frames_per_second) if frames_per_second > 0 else 0
+            remaining_time_seconds = max(0, (
+                        total_frames - frame_count) / frames_per_second) if frames_per_second > 0 else 0
             remaining_minutes, remaining_seconds = divmod(remaining_time_seconds, 60)
             elapsed_minutes, elapsed_seconds = divmod(elapsed_time, 60)
             progress_placeholder.text(
@@ -105,6 +109,7 @@ def process_video(source_img, video_path, output_video_path):
         out.release()
     except Exception as e:
         st.error(f"Error during video processing: {e}")
+
 
 def video_faceswap_app():
     st.title("Face Swapper for Video")
@@ -126,6 +131,7 @@ def video_faceswap_app():
         except Exception as e:
             st.error(f"Error during video processing: {e}")
 
+
 def main():
     app_selection = st.sidebar.radio("Select App", ("Image Face Swapping", "Video Face Swapping"))
     if app_selection == "Image Face Swapping":
@@ -133,10 +139,10 @@ def main():
     elif app_selection == "Video Face Swapping":
         video_faceswap_app()
 
+
 if __name__ == "__main__":
-    providers = ['CPUExecutionProvider']
     app = FaceAnalysis(name='buffalo_l')
-    app.prepare(ctx_id=0, det_size=(640, 640), providers=providers)
-    download_model() #download model if not available
-    swapper = insightface.model_zoo.get_model('inswapper_128.onnx', root=os.path.dirname(__file__), providers=providers)
+    app.prepare(ctx_id=0, det_size=(640, 640))
+    download_model()  # download model if not available
+    swapper = insightface.model_zoo.get_model('inswapper_128.onnx', root=os.path.dirname(__file__))
     main()
