@@ -7,6 +7,7 @@ import insightface
 from insightface.app import FaceAnalysis
 import time
 import requests
+import onnxruntime
 
 app = ''
 swapper = ''
@@ -31,7 +32,6 @@ def swap_faces(target_image, target_face, source_face):
         return swapper.get(target_image, target_face, source_face, paste_back=True)
     except Exception as e:
         st.error(f"Error during swaping: {e}")
-
 
 def image_faceswap_app():
     st.title("Face Swapper for Image")
@@ -66,7 +66,6 @@ def image_faceswap_app():
                     st.image(swapped_image, caption="Swapped Image", use_column_width=True)
             except Exception as e:
                 st.error(f"Error during image processing: {e}")
-
 
 def process_video(source_img, video_path, output_video_path):
     try:
@@ -107,7 +106,6 @@ def process_video(source_img, video_path, output_video_path):
     except Exception as e:
         st.error(f"Error during video processing: {e}")
 
-
 def video_faceswap_app():
     st.title("Face Swapper for Video")
     source_image = st.file_uploader("Upload Source Face Image", type=["jpg", "jpeg", "png"])
@@ -128,7 +126,6 @@ def video_faceswap_app():
         except Exception as e:
             st.error(f"Error during video processing: {e}")
 
-
 def main():
     app_selection = st.sidebar.radio("Select App", ("Image Face Swapping", "Video Face Swapping"))
     if app_selection == "Image Face Swapping":
@@ -136,10 +133,10 @@ def main():
     elif app_selection == "Video Face Swapping":
         video_faceswap_app()
 
-
 if __name__ == "__main__":
+    providers = ['CPUExecutionProvider']
     app = FaceAnalysis(name='buffalo_l')
-    app.prepare(ctx_id=0, det_size=(640, 640))
+    app.prepare(ctx_id=0, det_size=(640, 640), providers=providers)
     download_model() #download model if not available
-    swapper = insightface.model_zoo.get_model('inswapper_128.onnx', root=os.path.dirname(__file__))
+    swapper = insightface.model_zoo.get_model('inswapper_128.onnx', root=os.path.dirname(__file__), providers=providers)
     main()
