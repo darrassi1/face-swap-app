@@ -10,7 +10,7 @@ import requests
 
 app = ''
 swapper = ''
-st.set_page_config(page_title="FaceSwap App by Adil Khan")
+st.set_page_config(page_title="FaceSwap App by Younes Darrassi")
 
 def download_model():
     url = "https://cdn.adikhanofficial.com/python/insightface/models/inswapper_128.onnx"
