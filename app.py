@@ -8,6 +8,7 @@ from insightface.app import FaceAnalysis
 import time
 import requests
 
+os.environ['STREAMLIT_SERVER_HEALTH_CHECK_ENABLED'] = 'false'
 app = ''
 swapper = ''
 st.set_page_config(page_title="FaceSwap App by Younes Darrassi")
